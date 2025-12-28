@@ -6,19 +6,20 @@ const int numberCards = 108;
 const int Rows = 2;
 
 void isNumberRight(int numberOfPlayers) {
+
     bool isNumberRight = false;
 
-        while (!isNumberRight) {
-            if (numberOfPlayers > 4 || numberOfPlayers < 2) {
-                std::cout << "Invalid number" << std::endl << "Please enter number between 2 and 4" << std::endl;
-                std::cin >> numberOfPlayers;
-            }
-            else {
-                isNumberRight = true;
-            }
+    while (!isNumberRight) {
+        if (numberOfPlayers > 4 || numberOfPlayers < 2) {
+            std::cout << "Invalid number" << std::endl
+                << "Please enter number between 2 and 4" << std::endl;
+            std::cin >> numberOfPlayers;
         }
+        else {
+            isNumberRight = true;
+        }
+    }
 }
-
 
 void SuffleCard(char deck[Rows][numberCards]) {
 
@@ -36,6 +37,87 @@ void SuffleCard(char deck[Rows][numberCards]) {
     }
 }
 
+int my_len(char deck[Rows][numberCards]) {
+    
+    int size = 0;
+
+    for (int i = 0; i < numberCards; i++)
+    {
+        if (deck[0][i] == '\0') { 
+            break; 
+        }
+        size++;
+    }
+
+    return size;
+}
+
+void deleteTheLastCards(char deck[Rows][numberCards]) {
+
+    for (size_t i = 0; i < my_len(deck); i++)
+    {
+        if (deck[1][i] == 'e' || deck[0][i] == 'e') {
+            deck[0][i] = '\0';
+            deck[1][i] = '\0';
+        }
+    }
+}
+
+void addPlayersFirstCards(char deck[Rows][numberCards], char player[Rows][numberCards], int playerNumber) {
+
+    int playerNumberMinus7 = 7 + (playerNumber * 7);
+    
+    for (int i = 0; i < 7; i++) {
+        int len = i + my_len(deck) - playerNumberMinus7;
+
+        player[0][i] = deck[0][len];
+        player[1][i] = deck[1][len];
+
+        deck[0][len] = 'e';
+        deck[1][len] = 'e';
+
+    }
+}
+
+void twoPlayerGame(char deck[Rows][numberCards]) {
+
+    char playerOne[Rows][numberCards];
+    char playerTwo[Rows][numberCards];
+
+    addPlayersFirstCards(deck, playerOne, 0);
+    addPlayersFirstCards(deck, playerTwo, 1);
+
+
+    deleteTheLastCards(deck);
+
+    for (int i = 0; i < 7; i++) {
+        std::cout << "Card " << i + 1 << ": " << playerOne[0][i] << " " << playerOne[1][i] << std::endl;
+    }
+    for (int i = 0; i < 7; i++) {
+        std::cout << "Card " << i + 1 << ": " << playerTwo[0][i] << " " << playerTwo[1][i] << std::endl;
+    }
+
+
+}
+
+void threePlayerGame(char deck[Rows][numberCards]) {
+
+    char playerOne[Rows][numberCards];
+    char playerTwo[Rows][numberCards];
+    char playerThree[Rows][numberCards];
+
+
+}
+
+void fourPlayerGame(char deck[Rows][numberCards]) {
+
+    char playerOne[Rows][numberCards];
+    char playerTwo[Rows][numberCards];
+    char playerThree[Rows][numberCards];
+    char playerFour[Rows][numberCards];
+    
+
+}
 
 int main() {
 
@@ -64,19 +146,19 @@ int main() {
     std::cin >> numberOfPlayers;
 
     isNumberRight(numberOfPlayers);
-    
 
-    char playerOne[Rows][numberCards];
-    char playerTwo[Rows][numberCards];
-    char playerThree[Rows][numberCards];
-    char playerFour[Rows][numberCards];
+    if (numberOfPlayers == 2) {
+        twoPlayerGame(deck);
+    }
+    else if (numberOfPlayers == 3) {
+        threePlayerGame(deck);
+    }
+    else if (numberOfPlayers == 4) {
+        fourPlayerGame(deck);
+    }
 
-
-
-
-
-    for (int i = 0; i < numberCards; i++) {
-        std::cout << "Karta " << i << ": " << deck[0][i] << " " << deck[1][i] << std::endl;
+    for (int i = 0; i < my_len(deck); i++) {
+        std::cout << "Card " << i + 1 << ": " << deck[0][i] << " " << deck[1][i] << std::endl;
     }
 
     return 0;
