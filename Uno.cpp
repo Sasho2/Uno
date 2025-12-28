@@ -2,11 +2,46 @@
 #include <cstdlib>
 #include <ctime>
 
-int main()
-{
+const int numberCards = 108;
+const int Rows = 2;
+
+void isNumberRight(int numberOfPlayers) {
+    bool isNumberRight = false;
+
+        while (!isNumberRight) {
+            if (numberOfPlayers > 4 || numberOfPlayers < 2) {
+                std::cout << "Invalid number" << std::endl << "Please enter number between 2 and 4" << std::endl;
+                std::cin >> numberOfPlayers;
+            }
+            else {
+                isNumberRight = true;
+            }
+        }
+}
+
+
+void SuffleCard(char deck[Rows][numberCards]) {
+
+    for (int i = 0; i < numberCards; i++) {
+
+        int j = rand() % numberCards;
+
+        char tempColor = deck[0][i];
+        deck[0][i] = deck[0][j];
+        deck[0][j] = tempColor;
+
+        char tempValue = deck[1][i];
+        deck[1][i] = deck[1][j];
+        deck[1][j] = tempValue;
+    }
+}
+
+
+int main() {
+
     srand(time(0));
 
-    char deck[2][108] = {
+    char deck[Rows][numberCards] = {
      {
             'R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R','R',
             'G','G','G','G','G','G','G','G','G','G','G','G','G','G','G','G','G','G','G','G','G','G','G','G','G',
@@ -23,22 +58,24 @@ int main()
         }
     };
 
-    int n = 108; 
+    SuffleCard(deck);
+    
+    int numberOfPlayers;
+    std::cin >> numberOfPlayers;
 
-    for (int i = 0; i < n; i++) {
+    isNumberRight(numberOfPlayers);
+    
 
-        int j = rand() % n;
+    char playerOne[Rows][numberCards];
+    char playerTwo[Rows][numberCards];
+    char playerThree[Rows][numberCards];
+    char playerFour[Rows][numberCards];
 
-        char tempColor = deck[0][i];
-        deck[0][i] = deck[0][j];
-        deck[0][j] = tempColor;
 
-        char tempValue = deck[1][i];
-        deck[1][i] = deck[1][j];
-        deck[1][j] = tempValue;
-    }
 
-    for (int i = 0; i < n; i++) {
+
+
+    for (int i = 0; i < numberCards; i++) {
         std::cout << "Karta " << i << ": " << deck[0][i] << " " << deck[1][i] << std::endl;
     }
 
