@@ -43,7 +43,7 @@ int my_len(char deck[Rows][numberCards]) {
 
     for (int i = 0; i < numberCards; i++)
     {
-        if (deck[0][i] == '\0') { 
+        if (deck[0][i] == '\0') {
             break; 
         }
         size++;
@@ -68,6 +68,7 @@ void addPlayersFirstCards(char deck[Rows][numberCards], char player[Rows][number
     int playerNumberMinus7 = 7 + (playerNumber * 7);
     
     for (int i = 0; i < 7; i++) {
+
         int len = i + my_len(deck) - playerNumberMinus7;
 
         player[0][i] = deck[0][len];
@@ -75,8 +76,32 @@ void addPlayersFirstCards(char deck[Rows][numberCards], char player[Rows][number
 
         deck[0][len] = 'e';
         deck[1][len] = 'e';
-
     }
+    player[0][7] = '\0';
+    player[1][7] = '\0';
+}
+
+void drawCard(char deck[Rows][numberCards], char playerCards[Rows][numberCards]) {
+    int deckLen = my_len(deck) - 1;
+    int playerLen = my_len(playerCards);
+
+    playerCards[0][playerLen] = deck[0][deckLen];
+    playerCards[1][playerLen] = deck[1][deckLen];
+
+    playerCards[0][playerLen + 1] = '\0';
+    playerCards[1][playerLen + 1] = '\0';
+
+    deck[0][deckLen] = 'e';
+    deck[1][deckLen] = 'e';
+
+    deleteTheLastCards(deck);
+}
+
+void printCards(char player[Rows][numberCards]) {
+    for (int i = 0; i < my_len(player); i++) {
+        std::cout << '[' << i << "] " << player[0][i] << player[1][i] << " ";
+    }
+    std::cout << "[d] draw" << std::endl;
 }
 
 void twoPlayerGame(char deck[Rows][numberCards]) {
@@ -85,18 +110,42 @@ void twoPlayerGame(char deck[Rows][numberCards]) {
     char playerTwo[Rows][numberCards];
 
     addPlayersFirstCards(deck, playerOne, 0);
-    addPlayersFirstCards(deck, playerTwo, 1);
-
+    addPlayersFirstCards(deck, playerTwo, 1); 
 
     deleteTheLastCards(deck);
 
-    for (int i = 0; i < 7; i++) {
+    /*for (int i = 0; i < 7; i++) {
         std::cout << "Card " << i + 1 << ": " << playerOne[0][i] << " " << playerOne[1][i] << std::endl;
-    }
-    for (int i = 0; i < 7; i++) {
+    }*/
+    /*for (int i = 0; i < 7; i++) {
         std::cout << "Card " << i + 1 << ": " << playerTwo[0][i] << " " << playerTwo[1][i] << std::endl;
-    }
+    }*/
 
+    bool gameEnd = false;
+    int playersTurn = 1;
+
+    while (!gameEnd) {
+        char playerAction = '0';
+
+        if (playersTurn == 1) {
+            printCards(playerOne);
+            std::cin >> playerAction;
+            if (playerAction == 'd') {
+                drawCard(deck, playerOne);
+                playersTurn++;
+
+            }
+        } else if (playersTurn == 2) {
+            printCards(playerTwo);
+            std::cin >> playerAction;
+            if (playerAction == 'd') {
+                drawCard(deck, playerTwo);
+                playersTurn--;
+
+            }
+        }
+        
+    }
 
 }
 
