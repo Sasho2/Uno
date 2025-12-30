@@ -6,7 +6,6 @@ const int numberCards = 108;
 const int Rows = 2;
 
 void isNumberRight(int numberOfPlayers) {
-
     bool isNumberRight = false;
 
     while (!isNumberRight) {
@@ -22,7 +21,6 @@ void isNumberRight(int numberOfPlayers) {
 }
 
 void SuffleCard(char deck[Rows][numberCards]) {
-
     for (int i = 0; i < numberCards; i++) {
 
         int j = rand() % numberCards;
@@ -38,7 +36,6 @@ void SuffleCard(char deck[Rows][numberCards]) {
 }
 
 int my_len(char deck[Rows][numberCards]) {
-    
     int size = 0;
 
     for (int i = 0; i < numberCards; i++)
@@ -48,12 +45,10 @@ int my_len(char deck[Rows][numberCards]) {
         }
         size++;
     }
-
     return size;
 }
 
 void deleteTheLastCards(char deck[Rows][numberCards]) {
-
     for (size_t i = 0; i < my_len(deck); i++)
     {
         if (deck[1][i] == 'e' || deck[0][i] == 'e') {
@@ -64,11 +59,9 @@ void deleteTheLastCards(char deck[Rows][numberCards]) {
 }
 
 void addPlayersFirstCards(char deck[Rows][numberCards], char player[Rows][numberCards], int playerNumber) {
-
     int playerNumberMinus7 = 7 + (playerNumber * 7);
     
     for (int i = 0; i < 7; i++) {
-
         int len = i + my_len(deck) - playerNumberMinus7;
 
         player[0][i] = deck[0][len];
@@ -105,7 +98,6 @@ void printCards(char player[Rows][numberCards]) {
 }
 
 void twoPlayerGame(char deck[Rows][numberCards]) {
-
     char playerOne[Rows][numberCards];
     char playerTwo[Rows][numberCards];
 
@@ -114,18 +106,11 @@ void twoPlayerGame(char deck[Rows][numberCards]) {
 
     deleteTheLastCards(deck);
 
-    /*for (int i = 0; i < 7; i++) {
-        std::cout << "Card " << i + 1 << ": " << playerOne[0][i] << " " << playerOne[1][i] << std::endl;
-    }*/
-    /*for (int i = 0; i < 7; i++) {
-        std::cout << "Card " << i + 1 << ": " << playerTwo[0][i] << " " << playerTwo[1][i] << std::endl;
-    }*/
-
     bool gameEnd = false;
     int playersTurn = 1;
 
     while (!gameEnd) {
-        char playerAction = '0';
+        char playerAction = 'z';
 
         if (playersTurn == 1) {
             printCards(playerOne);
@@ -133,7 +118,6 @@ void twoPlayerGame(char deck[Rows][numberCards]) {
             if (playerAction == 'd') {
                 drawCard(deck, playerOne);
                 playersTurn++;
-
             }
         } else if (playersTurn == 2) {
             printCards(playerTwo);
@@ -141,7 +125,6 @@ void twoPlayerGame(char deck[Rows][numberCards]) {
             if (playerAction == 'd') {
                 drawCard(deck, playerTwo);
                 playersTurn--;
-
             }
         }
         
@@ -150,7 +133,6 @@ void twoPlayerGame(char deck[Rows][numberCards]) {
 }
 
 void threePlayerGame(char deck[Rows][numberCards]) {
-
     char playerOne[Rows][numberCards];
     char playerTwo[Rows][numberCards];
     char playerThree[Rows][numberCards];
@@ -159,7 +141,6 @@ void threePlayerGame(char deck[Rows][numberCards]) {
 }
 
 void fourPlayerGame(char deck[Rows][numberCards]) {
-
     char playerOne[Rows][numberCards];
     char playerTwo[Rows][numberCards];
     char playerThree[Rows][numberCards];
@@ -169,7 +150,6 @@ void fourPlayerGame(char deck[Rows][numberCards]) {
 }
 
 int main() {
-
     srand(time(0));
 
     char deck[Rows][numberCards] = {
@@ -204,10 +184,6 @@ int main() {
     }
     else if (numberOfPlayers == 4) {
         fourPlayerGame(deck);
-    }
-
-    for (int i = 0; i < my_len(deck); i++) {
-        std::cout << "Card " << i + 1 << ": " << deck[0][i] << " " << deck[1][i] << std::endl;
     }
 
     return 0;
