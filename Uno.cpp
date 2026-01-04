@@ -180,7 +180,7 @@ void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int pl
             drawCard(deck, player);
             rightAction = true;
         }
-        else if ((playerAction >= 1 && playerAction <= my_len(player))/* && isTheRightCard(usedDeck, player, playerAction)*/ && !rightAction) {
+        else if ((playerAction >= 1 && playerAction <= my_len(player)) && isTheRightCard(usedDeck, player, playerAction) && !rightAction) {
             RemoveCard(usedDeck, player, playerAction, &turnDirection);
             rightAction = true;
         }
@@ -191,21 +191,19 @@ void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int pl
     system("cls");
 
     if (!turnDirection) {
-        (*playersTurn)++;
+        *playersTurn++;
     } else if (turnDirection) {
-        (*playersTurn)--;
+        *playersTurn--;
     }
 
     if (*playersTurn == 0) {
         *playersTurn = numberOfPlayers;
     }
 
-    if (*playersTurn == (numberOfPlayers + 1)) {
-        *playersTurn = 1;
-    }
+
 
     if (my_len(player) == 0) {
-        std::cout << "Player "<< *playersTurn << " YOU WIN";
+        std::cout << "Player "<< playersTurn << " YOU WIN";
         *gameEnd = true;
     }
 }
@@ -213,9 +211,10 @@ void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int pl
 void twoPlayerGame(char deck[Rows][numberCards]) {
     char playerOne[Rows][numberCards];
     char playerTwo[Rows][numberCards];
-    char usedDeck[Rows][numberCards];
 
     int numberOfPlayers = 2;
+
+    char usedDeck[Rows][numberCards];
 
     addPlayersFirstCards(deck, playerOne, 0);
     addPlayersFirstCards(deck, playerTwo, 1); 
@@ -229,8 +228,10 @@ void twoPlayerGame(char deck[Rows][numberCards]) {
 
         if (playersTurn == 1 && !gameEnd) {
             Action(deck, playerOne, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
+            playersTurn++;
         } else if (playersTurn == 2 && !gameEnd) {
             Action(deck, playerTwo, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
+            playersTurn--;
         }
     }
 }
@@ -239,31 +240,8 @@ void threePlayerGame(char deck[Rows][numberCards]) {
     char playerOne[Rows][numberCards];
     char playerTwo[Rows][numberCards];
     char playerThree[Rows][numberCards];
-    char usedDeck[Rows][numberCards];
 
-    int numberOfPlayers = 3;
 
-    addPlayersFirstCards(deck, playerOne, 0);
-    addPlayersFirstCards(deck, playerTwo, 1);
-    addPlayersFirstCards(deck, playerThree, 2);
-    addUsedDeckFirstCards(deck, usedDeck);
-
-    bool gameEnd = false;
-    int playersTurn = 1;
-
-    while (!gameEnd) {
-        int playerAction = -2;
-
-        if (playersTurn == 1 && !gameEnd) {
-            Action(deck, playerOne, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
-        }
-        else if (playersTurn == 2 && !gameEnd) {
-            Action(deck, playerTwo, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
-        }
-        else if (playersTurn == 3 && !gameEnd) {
-            Action(deck, playerThree, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
-        }
-    }
 }
 
 void fourPlayerGame(char deck[Rows][numberCards]) {
@@ -271,35 +249,8 @@ void fourPlayerGame(char deck[Rows][numberCards]) {
     char playerTwo[Rows][numberCards];
     char playerThree[Rows][numberCards];
     char playerFour[Rows][numberCards];
-    char usedDeck[Rows][numberCards];
+    
 
-    int numberOfPlayers = 4;
-
-    addPlayersFirstCards(deck, playerOne, 0);
-    addPlayersFirstCards(deck, playerTwo, 1);
-    addPlayersFirstCards(deck, playerThree, 2);
-    addPlayersFirstCards(deck, playerFour, 3);
-    addUsedDeckFirstCards(deck, usedDeck);
-
-    bool gameEnd = false;
-    int playersTurn = 1;
-
-    while (!gameEnd) {
-        int playerAction = -2;
-
-        if (playersTurn == 1 && !gameEnd) {
-            Action(deck, playerOne, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
-        }
-        else if (playersTurn == 2 && !gameEnd) {
-            Action(deck, playerTwo, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
-        }
-        else if (playersTurn == 3 && !gameEnd) {
-            Action(deck, playerThree, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
-        }
-        else if (playersTurn == 4 && !gameEnd) {
-            Action(deck, playerFour, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
-        }
-    }
 }
 
 int main() {
