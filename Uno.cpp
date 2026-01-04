@@ -117,11 +117,20 @@ void printCards(char player[Rows][numberCards], char usedDeck[Rows][numberCards]
     std::cout << std::endl;
 }
 
-void RemoveCard(char usedDeck[Rows][numberCards], char player[Rows][numberCards], int playerAction) {
+void RemoveCard(char usedDeck[Rows][numberCards], char player[Rows][numberCards], int playerAction, bool *turnDirection) {
     int usedDeckLen = my_len(usedDeck);
 
     usedDeck[0][usedDeckLen] = player[0][playerAction - 1];
     usedDeck[1][usedDeckLen] = player[1][playerAction - 1];
+
+    if (usedDeck[1][usedDeckLen] == 'R') {
+        if (*turnDirection) {
+            *turnDirection = false;
+        }
+        else if (!(*turnDirection)) {
+            *turnDirection = true;
+        }
+    }
 
     usedDeck[0][usedDeckLen + 1] = '\0';
     usedDeck[1][usedDeckLen + 1] = '\0';
@@ -142,43 +151,61 @@ bool isTheRightCard(char usedDeck[Rows][numberCards], char player[Rows][numberCa
     return false;
 }
 
-void oneCardLeft(char player[Rows][numberCards], int playerAction, char usedDeck[Rows][numberCards], bool *rightAction) {
+void oneCardLeft(char player[Rows][numberCards], int playerAction, char usedDeck[Rows][numberCards], bool *rightAction, bool turnDirection) {
     if (playerAction != 0 && my_len(player) == 1 && isTheRightCard(usedDeck, player, playerAction)) {
-                char uno;
-                std::cout << "Type [u] Uno" << std::endl;
-                std::cin >> uno;
-                if (uno == 'u') {
-                    RemoveCard(usedDeck, player, playerAction);
-                    *rightAction = true;
-                }
-            }
+        char uno;
+        std::cout << "Type [u] Uno" << std::endl;
+        std::cin >> uno;
+
+        if (uno == 'u') {
+            RemoveCard(usedDeck, player, playerAction, &turnDirection);
+            *rightAction = true;
+        }
+    }
 }
 
-void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int playerAction, int playersTurn, char usedDeck[Rows][numberCards], bool *gameEnd) {
-    //system("cls");
+void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int playerAction, int *playersTurn, char usedDeck[Rows][numberCards], bool *gameEnd, int numberOfPlayers) {
+    
     printCards(player, usedDeck);
     
     bool rightAction = false;
+    bool turnDirection = false;
 
     while (!rightAction) {
         std::cin >> playerAction;
 
-        oneCardLeft(player, playerAction, usedDeck, &rightAction);
+        oneCardLeft(player, playerAction, usedDeck, &rightAction, turnDirection);
 
         if (playerAction == 0 && !rightAction) {
             drawCard(deck, player);
             rightAction = true;
         }
-        else if ((playerAction >= 1 && playerAction <= my_len(player)) && isTheRightCard(usedDeck, player, playerAction) && !rightAction) {
-            RemoveCard(usedDeck, player, playerAction);
+        else if ((playerAction >= 1 && playerAction <= my_len(player))/* && isTheRightCard(usedDeck, player, playerAction)*/ && !rightAction) {
+            RemoveCard(usedDeck, player, playerAction, &turnDirection);
             rightAction = true;
         }
         else {
             std::cout << "Wrong Action" << std::endl;
         }
     }
+    system("cls");
+
+    if (!turnDirection) {
+        (*playersTurn)++;
+    } else if (turnDirection) {
+        (*playersTurn)--;
+    }
+
+    if (*playersTurn == 0) {
+        *playersTurn = numberOfPlayers;
+    }
+
+    if (*playersTurn == (numberOfPlayers + 1)) {
+        *playersTurn = 1;
+    }
+
     if (my_len(player) == 0) {
-        std::cout << "Player "<< playersTurn << " YOU WIN";
+        std::cout << "Player "<< *playersTurn << " YOU WIN";
         *gameEnd = true;
     }
 }
@@ -186,8 +213,9 @@ void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int pl
 void twoPlayerGame(char deck[Rows][numberCards]) {
     char playerOne[Rows][numberCards];
     char playerTwo[Rows][numberCards];
-
     char usedDeck[Rows][numberCards];
+
+    int numberOfPlayers = 2;
 
     addPlayersFirstCards(deck, playerOne, 0);
     addPlayersFirstCards(deck, playerTwo, 1); 
@@ -200,11 +228,9 @@ void twoPlayerGame(char deck[Rows][numberCards]) {
         int playerAction = -2;
 
         if (playersTurn == 1 && !gameEnd) {
-            Action(deck, playerOne, playerAction, playersTurn, usedDeck, &gameEnd);
-            playersTurn++;
+            Action(deck, playerOne, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
         } else if (playersTurn == 2 && !gameEnd) {
-            Action(deck, playerTwo, playerAction, playersTurn, usedDeck, &gameEnd);
-            playersTurn--;
+            Action(deck, playerTwo, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
         }
     }
 }
@@ -213,8 +239,31 @@ void threePlayerGame(char deck[Rows][numberCards]) {
     char playerOne[Rows][numberCards];
     char playerTwo[Rows][numberCards];
     char playerThree[Rows][numberCards];
+    char usedDeck[Rows][numberCards];
 
+    int numberOfPlayers = 3;
 
+    addPlayersFirstCards(deck, playerOne, 0);
+    addPlayersFirstCards(deck, playerTwo, 1);
+    addPlayersFirstCards(deck, playerThree, 2);
+    addUsedDeckFirstCards(deck, usedDeck);
+
+    bool gameEnd = false;
+    int playersTurn = 1;
+
+    while (!gameEnd) {
+        int playerAction = -2;
+
+        if (playersTurn == 1 && !gameEnd) {
+            Action(deck, playerOne, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
+        }
+        else if (playersTurn == 2 && !gameEnd) {
+            Action(deck, playerTwo, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
+        }
+        else if (playersTurn == 3 && !gameEnd) {
+            Action(deck, playerThree, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
+        }
+    }
 }
 
 void fourPlayerGame(char deck[Rows][numberCards]) {
@@ -222,8 +271,35 @@ void fourPlayerGame(char deck[Rows][numberCards]) {
     char playerTwo[Rows][numberCards];
     char playerThree[Rows][numberCards];
     char playerFour[Rows][numberCards];
-    
+    char usedDeck[Rows][numberCards];
 
+    int numberOfPlayers = 4;
+
+    addPlayersFirstCards(deck, playerOne, 0);
+    addPlayersFirstCards(deck, playerTwo, 1);
+    addPlayersFirstCards(deck, playerThree, 2);
+    addPlayersFirstCards(deck, playerFour, 3);
+    addUsedDeckFirstCards(deck, usedDeck);
+
+    bool gameEnd = false;
+    int playersTurn = 1;
+
+    while (!gameEnd) {
+        int playerAction = -2;
+
+        if (playersTurn == 1 && !gameEnd) {
+            Action(deck, playerOne, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
+        }
+        else if (playersTurn == 2 && !gameEnd) {
+            Action(deck, playerTwo, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
+        }
+        else if (playersTurn == 3 && !gameEnd) {
+            Action(deck, playerThree, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
+        }
+        else if (playersTurn == 4 && !gameEnd) {
+            Action(deck, playerFour, playerAction, &playersTurn, usedDeck, &gameEnd, numberOfPlayers);
+        }
+    }
 }
 
 int main() {
