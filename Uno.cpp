@@ -20,21 +20,6 @@ void isNumberRight(int* numberOfPlayers) {
     }
 }
 
-void SuffleCard(char deck[Rows][numberCards]) {
-    for (int i = 0; i < numberCards; i++) {
-
-        int j = rand() % numberCards;
-
-        char tempColor = deck[0][i];
-        deck[0][i] = deck[0][j];
-        deck[0][j] = tempColor;
-
-        char tempValue = deck[1][i];
-        deck[1][i] = deck[1][j];
-        deck[1][j] = tempValue;
-    }
-}
-
 int my_len(char deck[Rows][numberCards]) {
     int size = 0;
 
@@ -46,6 +31,23 @@ int my_len(char deck[Rows][numberCards]) {
         size++;
     }
     return size;
+}
+
+void SuffleCard(char deck[Rows][numberCards]) {
+    int numberOfCards = my_len(deck);
+
+    for (int i = 0; i < numberOfCards; i++) {
+
+        int j = rand() % numberOfCards;
+
+        char tempColor = deck[0][i];
+        deck[0][i] = deck[0][j];
+        deck[0][j] = tempColor;
+
+        char tempValue = deck[1][i];
+        deck[1][i] = deck[1][j];
+        deck[1][j] = tempValue;
+    }
 }
 
 void deleteTheLastCards(char deck[Rows][numberCards]) {
@@ -345,12 +347,10 @@ void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int pl
     }
 }
 
-void twoPlayerGame(char deck[Rows][numberCards]) {
+void twoPlayerGame(char deck[Rows][numberCards], int numberOfPlayers) {
     char playerOne[Rows][numberCards];
     char playerTwo[Rows][numberCards];
     char usedDeck[Rows][numberCards];
-
-    int numberOfPlayers = 2;
 
     addPlayersFirstCards(deck, playerOne, 0);
     addPlayersFirstCards(deck, playerTwo, 1);
@@ -374,13 +374,11 @@ void twoPlayerGame(char deck[Rows][numberCards]) {
     }
 }
 
-void threePlayerGame(char deck[Rows][numberCards]) {
+void threePlayerGame(char deck[Rows][numberCards], int numberOfPlayers) {
     char playerOne[Rows][numberCards];
     char playerTwo[Rows][numberCards];
     char playerThree[Rows][numberCards];
     char usedDeck[Rows][numberCards];
-
-    int numberOfPlayers = 3;
 
     addPlayersFirstCards(deck, playerOne, 0);
     addPlayersFirstCards(deck, playerTwo, 1);
@@ -408,14 +406,12 @@ void threePlayerGame(char deck[Rows][numberCards]) {
     }
 }
 
-void fourPlayerGame(char deck[Rows][numberCards]) {
+void fourPlayerGame(char deck[Rows][numberCards], int numberOfPlayers) {
     char playerOne[Rows][numberCards];
     char playerTwo[Rows][numberCards];
     char playerThree[Rows][numberCards];
     char playerFour[Rows][numberCards];
     char usedDeck[Rows][numberCards];
-
-    int numberOfPlayers = 4;
 
     addPlayersFirstCards(deck, playerOne, 0);
     addPlayersFirstCards(deck, playerTwo, 1);
@@ -477,13 +473,13 @@ int main() {
     isNumberRight(&numberOfPlayers);
 
     if (numberOfPlayers == 2) {
-        twoPlayerGame(deck);
+        twoPlayerGame(deck, numberOfPlayers);
     }
     else if (numberOfPlayers == 3) {
-        threePlayerGame(deck);
+        threePlayerGame(deck, numberOfPlayers);
     }
     else if (numberOfPlayers == 4) {
-        fourPlayerGame(deck);
+        fourPlayerGame(deck, numberOfPlayers);
     }
 
     return 0;
