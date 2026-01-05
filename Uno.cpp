@@ -147,7 +147,8 @@ bool isTheRightCard(char usedDeck[Rows][numberCards], char player[Rows][numberCa
     return false;
 }
 
-void oneCardLeft(char player[Rows][numberCards], int playerAction, char usedDeck[Rows][numberCards], bool* rightAction, bool turnDirection) {
+void oneCardLeft(char player[Rows][numberCards], int playerAction, char usedDeck[Rows][numberCards], 
+    bool *rightAction, bool turnDirection) {
     if (playerAction != 0 && my_len(player) == 1 && isTheRightCard(usedDeck, player, playerAction)) {
         char uno;
         bool rightChar = false;
@@ -164,7 +165,8 @@ void oneCardLeft(char player[Rows][numberCards], int playerAction, char usedDeck
     }
 }
 
-void CheckForSpecialCard(char usedDeck[Rows][numberCards], char player[Rows][numberCards], int playerAction, bool* turnDirection, bool *isSkip, bool *isDouble1) {
+void CheckForSpecialCard(char usedDeck[Rows][numberCards], char player[Rows][numberCards], 
+    int playerAction, bool* turnDirection, bool *isSkip, bool *isDouble1, bool *isReverse) {
 
     if (usedDeck[1][my_len(usedDeck) - 1] == 'R') {
         if (*turnDirection) {
@@ -173,6 +175,7 @@ void CheckForSpecialCard(char usedDeck[Rows][numberCards], char player[Rows][num
         else if (!(*turnDirection)) {
             *turnDirection = true;
         }
+        *isReverse = true;
     }
     if (usedDeck[1][my_len(usedDeck) - 1] == 'S') {
         *isSkip = false;
@@ -180,9 +183,17 @@ void CheckForSpecialCard(char usedDeck[Rows][numberCards], char player[Rows][num
     if (usedDeck[1][my_len(usedDeck) - 1] == 'D') {
         *isDouble1 = false;
     }
+    if (usedDeck[0][my_len(usedDeck) - 1] == 'W' && usedDeck[1][my_len(usedDeck) - 1] == '4') {
+
+    } 
+    if (usedDeck[0][my_len(usedDeck) - 1] == 'W' && usedDeck[1][my_len(usedDeck) - 1] == 'W') {
+        
+    }
+
 }
 
-void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int playerAction, int* playersTurn, char usedDeck[Rows][numberCards], bool* gameEnd, int numberOfPlayers, bool* turnDirection, bool *isDouble) {
+void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int playerAction, int* playersTurn, 
+    char usedDeck[Rows][numberCards], bool* gameEnd, int numberOfPlayers, bool* turnDirection, bool *isDouble) {
 
     printCards(player, usedDeck, *playersTurn);
     bool turnDirection1 = *turnDirection;
@@ -190,6 +201,7 @@ void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int pl
     bool foundMatch = false;
     bool isSkip = true;
     bool isDouble1 = *isDouble;
+    bool isReverse = false;
 
     for (size_t i = 0; i < my_len(player); i++)
     {
@@ -224,9 +236,10 @@ void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int pl
             drawCard(deck, player);
             rightAction = true;
         }
-        else if ((playerAction >= 1 && playerAction <= my_len(player))/* && isTheRightCard(usedDeck, player, playerAction)*/ && !rightAction) {
+        else if ((playerAction >= 1 && playerAction <= my_len(player))
+            /* && isTheRightCard(usedDeck, player, playerAction)*/ && !rightAction) {
             RemoveCard(usedDeck, player, playerAction);
-            CheckForSpecialCard(usedDeck, player, playerAction, &turnDirection1, &isSkip, &isDouble1);
+            CheckForSpecialCard(usedDeck, player, playerAction, &turnDirection1, &isSkip, &isDouble1, &isReverse);
             *isDouble = isDouble1;
             *turnDirection = turnDirection1;
             rightAction = true;
@@ -235,12 +248,13 @@ void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int pl
             std::cout << "Wrong Action" << std::endl;
         }
     }
-
-    if (!(*turnDirection)) {
-        (*playersTurn)++;
-    }
-    else if (*turnDirection) {
-        (*playersTurn)--;
+    if (!(isReverse && numberOfPlayers == 2)) {
+        if (!(*turnDirection)) {
+            (*playersTurn)++;
+        }
+        else if (*turnDirection) {
+            (*playersTurn)--;
+        }
     }
     if (*playersTurn <= 0) {
         *playersTurn = numberOfPlayers;
