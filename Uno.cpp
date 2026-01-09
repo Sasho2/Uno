@@ -415,13 +415,7 @@ void Action(char deck[Rows][numberCards], char allPlayers[maxPlayers][Rows][numb
             (*playersTurn)--;
         }
     }
-    if (*playersTurn <= 0) {
-        *playersTurn = numberOfPlayers;
-    }
-    if (*playersTurn >= (numberOfPlayers + 1)) {
-        *playersTurn = 1;
-    }
-
+    
     if (!(*turnDirection) && !isSkip) {
         (*playersTurn)++;
     }
@@ -430,10 +424,10 @@ void Action(char deck[Rows][numberCards], char allPlayers[maxPlayers][Rows][numb
     }
 
     if (*playersTurn <= 0) {
-        *playersTurn = numberOfPlayers;
-    }
-    if (*playersTurn >= (numberOfPlayers + 1)) {
-        *playersTurn = 1;
+        *playersTurn += numberOfPlayers;
+    } 
+    else if (*playersTurn >= (numberOfPlayers + 1)) {
+        *playersTurn -= numberOfPlayers;
     }
 
     if (my_len(player) == 0) {
@@ -446,11 +440,11 @@ void Action(char deck[Rows][numberCards], char allPlayers[maxPlayers][Rows][numb
             (*playersTurn)++;
         }
 
-        if (*playersTurn == 0) {
-            *playersTurn = numberOfPlayers;
+        if (*playersTurn <= 0) {
+            *playersTurn += numberOfPlayers;
         }
-        if (*playersTurn == (numberOfPlayers + 1)) {
-            *playersTurn = 1;
+        else if (*playersTurn >= (numberOfPlayers + 1)) {
+            *playersTurn -= numberOfPlayers;
         }
         std::cout << "Player " << *playersTurn << " YOU WIN";
         *gameEnd = true;
