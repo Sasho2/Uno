@@ -98,7 +98,8 @@ void saveGame(char deck[Rows][numberCards], char players[maxPlayers][Rows][numbe
         return;
     }
 
-    file << numberOfPlayers << " " << playersTurn << " " << turnDirection << " " << isDouble << " " << isPlus4 << std::endl;
+    file << numberOfPlayers << " " << playersTurn << " " 
+        << turnDirection << " " << isDouble << " " << isPlus4 << std::endl;
 
     auto writeRow = [&](char target[Rows][numberCards]) {
         int len = my_len(target);
@@ -197,7 +198,8 @@ void drawCard(char deck[Rows][numberCards], char playerCards[Rows][numberCards])
     deck[0][deckLen] = 'e';
     deck[1][deckLen] = 'e';
 
-    std::cout << "New card: " << playerCards[0][playerLen] << playerCards[1][playerLen] << std::endl << std::endl;
+    std::cout << "New card: " << playerCards[0][playerLen] << playerCards[1][playerLen] 
+        << std::endl << std::endl;
 
     deleteTheLastCards(deck);
 }
@@ -205,7 +207,8 @@ void drawCard(char deck[Rows][numberCards], char playerCards[Rows][numberCards])
 void printCards(char player[Rows][numberCards], char usedDeck[Rows][numberCards], int playersTurn) {
     if (player == nullptr || usedDeck == nullptr) return;
 
-    std::cout << "Current card: " << usedDeck[0][my_len(usedDeck) - 1] << usedDeck[1][my_len(usedDeck) - 1] << " ";
+    std::cout << "Current card: " << usedDeck[0][my_len(usedDeck) - 1] 
+        << usedDeck[1][my_len(usedDeck) - 1] << " ";
     std::cout << std::endl;
     std::cout << std::endl;
 
@@ -353,7 +356,8 @@ void haveMatchCard(char player[Rows][numberCards], char usedDeck[Rows][numberCar
 }
 
 void Action(char deck[Rows][numberCards], char allPlayers[maxPlayers][Rows][numberCards], int* playersTurn,
-    char usedDeck[Rows][numberCards], bool* gameEnd, int numberOfPlayers, bool* turnDirection, bool* isDouble, bool* isPlus4) {
+    char usedDeck[Rows][numberCards], bool* gameEnd, int numberOfPlayers, 
+    bool* turnDirection, bool* isDouble, bool* isPlus4) {
     if (deck == nullptr || usedDeck == nullptr || allPlayers == nullptr ||
         playersTurn == nullptr || gameEnd == nullptr || turnDirection == nullptr
         || isDouble == nullptr || isPlus4 == nullptr) return;
@@ -416,7 +420,8 @@ void Action(char deck[Rows][numberCards], char allPlayers[maxPlayers][Rows][numb
             isTheDeckEmpty(deck, usedDeck);
             rightAction = true;
         }
-        else if ((playerAction >= 1 && playerAction <= my_len(player)) && !rightAction  && isTheRightCard(usedDeck, player, playerAction)) {
+        else if ((playerAction >= 1 && playerAction <= my_len(player)) && !rightAction  
+            && isTheRightCard(usedDeck, player, playerAction)) {
             RemoveCard(usedDeck, player, playerAction);
             CheckForSpecialCard(usedDeck, &turnDirection1, &isSkip, &isDouble1, &isReverse, isPlus4);
             *isDouble = isDouble1;
