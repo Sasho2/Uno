@@ -3,6 +3,7 @@
 #include <ctime>
 #include <fstream>
 
+const int maxPlayers = 4;
 const int numberCards = 108;
 const int Rows = 2;
 
@@ -69,7 +70,7 @@ void deleteTheLastCards(char deck[Rows][numberCards]) {
     }
 }
 
-void saveGame(char deck[Rows][numberCards], char players[4][Rows][numberCards],
+void saveGame(char deck[Rows][numberCards], char players[maxPlayers][Rows][numberCards],
     char usedDeck[Rows][numberCards], int numberOfPlayers,
     int playersTurn, bool turnDirection, bool isDouble, bool isPlus4) {
     if (deck == nullptr || players == nullptr || usedDeck == nullptr) return;
@@ -101,7 +102,7 @@ void saveGame(char deck[Rows][numberCards], char players[4][Rows][numberCards],
     std::cout << "The game is saved. You can close the game." << std::endl;
 }
 
-bool loadGame(char deck[Rows][numberCards], char players[4][Rows][numberCards],
+bool loadGame(char deck[Rows][numberCards], char players[maxPlayers][Rows][numberCards],
     char usedDeck[Rows][numberCards], int& numberOfPlayers,
     int& playersTurn, bool& turnDirection, bool& isDouble, bool& isPlus4) {
 
@@ -334,7 +335,7 @@ void haveMatchCard(char player[Rows][numberCards], char usedDeck[Rows][numberCar
         }
 }
 
-void Action(char deck[Rows][numberCards], char allPlayers[4][Rows][numberCards], int* playersTurn,
+void Action(char deck[Rows][numberCards], char allPlayers[maxPlayers][Rows][numberCards], int* playersTurn,
     char usedDeck[Rows][numberCards], bool* gameEnd, int numberOfPlayers, bool* turnDirection, bool* isDouble, bool* isPlus4) {
     if (deck == nullptr || usedDeck == nullptr || allPlayers == nullptr ||
         playersTurn == nullptr || gameEnd == nullptr || turnDirection == nullptr
@@ -459,7 +460,7 @@ void Action(char deck[Rows][numberCards], char allPlayers[4][Rows][numberCards],
 void playGame(char deck[Rows][numberCards]) {
     if (deck == nullptr) return;
 
-    char players[4][Rows][numberCards];
+    char players[maxPlayers][Rows][numberCards];
     char usedDeck[Rows][numberCards];
     
     int choice = 0; 
