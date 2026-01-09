@@ -1,11 +1,14 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 
 const int numberCards = 108;
 const int Rows = 2;
 
 void isNumberRight(int* numberOfPlayers) {
+    if (numberOfPlayers == nullptr) return;
+
     bool isNumberRight = false;
 
     while (!isNumberRight) {
@@ -21,6 +24,8 @@ void isNumberRight(int* numberOfPlayers) {
 }
 
 int my_len(char cards[Rows][numberCards]) {
+    if (cards == nullptr) return 0;
+
     int size = 0;
 
     for (int i = 0; i < numberCards; i++)
@@ -34,6 +39,8 @@ int my_len(char cards[Rows][numberCards]) {
 }
 
 void SuffleCard(char deck[Rows][numberCards]) {
+    if (deck == nullptr) return;
+
     int numberOfCards = my_len(deck);
 
     for (int i = 0; i < numberOfCards; i++) {
@@ -51,6 +58,8 @@ void SuffleCard(char deck[Rows][numberCards]) {
 }
 
 void deleteTheLastCards(char deck[Rows][numberCards]) {
+    if (deck == nullptr) return;
+
     for (size_t i = 0; i < my_len(deck); i++)
     {
         if (deck[1][i] == 'e' || deck[0][i] == 'e') {
@@ -60,7 +69,68 @@ void deleteTheLastCards(char deck[Rows][numberCards]) {
     }
 }
 
+void saveGame(char deck[Rows][numberCards], char players[4][Rows][numberCards],
+    char usedDeck[Rows][numberCards], int numberOfPlayers,
+    int playersTurn, bool turnDirection, bool isDouble, bool isPlus4) {
+    if (deck == nullptr || players == nullptr || usedDeck == nullptr) return;
+
+    std::ofstream file("uno_save.txt");
+    if (!file) {
+        std::cout << "Something went wrong!" << std::endl;
+        return;
+    }
+
+    file << numberOfPlayers << " " << playersTurn << " " << turnDirection << " " << isDouble << " " << isPlus4 << std::endl;
+
+    auto writeRow = [&](char target[Rows][numberCards]) {
+        int len = my_len(target);
+        file << len << std::endl;
+        for (int i = 0; i < len; i++) file << target[0][i];
+        file << std::endl;
+        for (int i = 0; i < len; i++) file << target[1][i];
+        file << std::endl;
+        };
+
+    writeRow(deck);
+    writeRow(usedDeck);
+    for (int i = 0; i < numberOfPlayers; i++) {
+        writeRow(players[i]);
+    }
+
+    file.close();
+    std::cout << "The game is saved. You can close the game." << std::endl;
+}
+
+bool loadGame(char deck[Rows][numberCards], char players[4][Rows][numberCards],
+    char usedDeck[Rows][numberCards], int& numberOfPlayers,
+    int& playersTurn, bool& turnDirection, bool& isDouble, bool& isPlus4) {
+
+    std::ifstream file("uno_save.txt");
+    if (!file) return false;
+
+    file >> numberOfPlayers >> playersTurn >> turnDirection >> isDouble >> isPlus4;
+
+    auto readRow = [&](char target[Rows][numberCards]) {
+        int len;
+        file >> len;
+        for (int i = 0; i < len; i++) file >> target[0][i];
+        target[0][len] = '\0';
+        for (int i = 0; i < len; i++) file >> target[1][i];
+        target[1][len] = '\0';
+        };
+
+    readRow(deck);
+    readRow(usedDeck);
+    for (int i = 0; i < numberOfPlayers; i++) readRow(players[i]);
+
+    file.close();
+    return true;
+}
+
 void addPlayersFirstCards(char deck[Rows][numberCards], char player[Rows][numberCards], int playerNumber) {
+    if (deck == nullptr || player == nullptr) return;
+
+
     int playerNumberMinus7 = 7 + (playerNumber * 7);
 
     for (int i = 0; i < 7; i++) {
@@ -79,6 +149,8 @@ void addPlayersFirstCards(char deck[Rows][numberCards], char player[Rows][number
 }
 
 void addUsedDeckFirstCards(char deck[Rows][numberCards], char usedDeck[Rows][numberCards]) {
+    if (deck == nullptr || usedDeck == nullptr) return;
+
     usedDeck[0][0] = deck[0][my_len(deck) - 1];
     usedDeck[1][0] = deck[1][my_len(deck) - 1];
 
@@ -92,6 +164,9 @@ void addUsedDeckFirstCards(char deck[Rows][numberCards], char usedDeck[Rows][num
 }
 
 void drawCard(char deck[Rows][numberCards], char playerCards[Rows][numberCards]) {
+    if (deck == nullptr || playerCards == nullptr) return;
+
+
     int deckLen = my_len(deck) - 1;
     int playerLen = my_len(playerCards);
 
@@ -110,13 +185,15 @@ void drawCard(char deck[Rows][numberCards], char playerCards[Rows][numberCards])
 }
 
 void printCards(char player[Rows][numberCards], char usedDeck[Rows][numberCards], int playersTurn) {
+    if (player == nullptr || usedDeck == nullptr) return;
+
     std::cout << "Current card: " << usedDeck[0][my_len(usedDeck) - 1] << usedDeck[1][my_len(usedDeck) - 1] << " ";
     std::cout << std::endl;
     std::cout << std::endl;
 
     std::cout << "Player " << playersTurn << " - Your cards:" << std::endl;
 
-    std::cout << "[0] draw ";
+    std::cout << "[-1] SAVE [0] DRAW ";
     for (int i = 0; i < my_len(player); i++) {
         std::cout << '[' << i + 1 << "] " << player[0][i] << player[1][i] << " ";
     }
@@ -125,6 +202,8 @@ void printCards(char player[Rows][numberCards], char usedDeck[Rows][numberCards]
 }
 
 void RemoveCard(char usedDeck[Rows][numberCards], char player[Rows][numberCards], int playerAction) {
+    if (player == nullptr || usedDeck == nullptr) return;
+
     int usedDeckLen = my_len(usedDeck);
     int playerLen = my_len(player);
 
@@ -142,6 +221,8 @@ void RemoveCard(char usedDeck[Rows][numberCards], char player[Rows][numberCards]
 }
 
 bool isTheRightCard(char usedDeck[Rows][numberCards], char player[Rows][numberCards], int playerAction) {
+    if (player == nullptr || usedDeck == nullptr) return false;
+
     if (usedDeck[0][my_len(usedDeck) - 1] == player[0][playerAction - 1]
         || usedDeck[1][my_len(usedDeck) - 1] == player[1][playerAction - 1]
         || player[0][playerAction - 1] == 'W'
@@ -151,8 +232,10 @@ bool isTheRightCard(char usedDeck[Rows][numberCards], char player[Rows][numberCa
     return false;
 }
 
-void oneCardLeft(char player[Rows][numberCards], int playerAction, char usedDeck[Rows][numberCards], 
-    bool *rightAction) {
+void oneCardLeft(char player[Rows][numberCards], int playerAction, 
+    char usedDeck[Rows][numberCards], bool *rightAction) {
+    if (player == nullptr || usedDeck == nullptr || rightAction == nullptr) return;
+
     if (playerAction != 0 && my_len(player) == 1 && isTheRightCard(usedDeck, player, playerAction)) {
         char uno;
         bool rightChar = false;
@@ -171,6 +254,9 @@ void oneCardLeft(char player[Rows][numberCards], int playerAction, char usedDeck
 
 void CheckForSpecialCard(char usedDeck[Rows][numberCards], bool* turnDirection, 
     bool* isSkip, bool* isDouble1, bool* isReverse, bool* isPlus4) {
+    if (turnDirection == nullptr || usedDeck == nullptr || isSkip == nullptr
+        || isDouble1 == nullptr || isReverse == nullptr || isPlus4 == nullptr) return;
+
 
     int lastId = my_len(usedDeck) - 1;
 
@@ -198,6 +284,8 @@ void CheckForSpecialCard(char usedDeck[Rows][numberCards], bool* turnDirection,
 }
 
 void isTheDeckEmpty(char deck[Rows][numberCards], char usedDeck[Rows][numberCards]) {
+    if (deck == nullptr || usedDeck == nullptr) return;
+
     if (my_len(deck) == 0) {
         std::cout << "No more cards in the deck. Shuffling used cards..." << std::endl;
 
@@ -234,6 +322,9 @@ void isTheDeckEmpty(char deck[Rows][numberCards], char usedDeck[Rows][numberCard
 }
 
 void haveMatchCard(char player[Rows][numberCards], char usedDeck[Rows][numberCards], bool *foundMatch) {
+    if (player == nullptr || usedDeck == nullptr || foundMatch == nullptr) return;
+
+
     for (size_t i = 0; i < my_len(player); i++) {
             if (usedDeck[0][my_len(usedDeck) - 1] == player[0][i]
                 || usedDeck[1][my_len(usedDeck) - 1] == player[1][i]
@@ -243,10 +334,17 @@ void haveMatchCard(char player[Rows][numberCards], char usedDeck[Rows][numberCar
         }
 }
 
-void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int* playersTurn,
+void Action(char deck[Rows][numberCards], char allPlayers[4][Rows][numberCards], int* playersTurn,
     char usedDeck[Rows][numberCards], bool* gameEnd, int numberOfPlayers, bool* turnDirection, bool* isDouble, bool* isPlus4) {
+    if (deck == nullptr || usedDeck == nullptr || allPlayers == nullptr ||
+        playersTurn == nullptr || gameEnd == nullptr || turnDirection == nullptr
+        || isDouble == nullptr || isPlus4 == nullptr) return;
+
+
+    char (*player)[numberCards] = allPlayers[*playersTurn - 1];
 
     printCards(player, usedDeck, *playersTurn);
+    
     int playerAction = -2;
     bool turnDirection1 = *turnDirection;
     bool rightAction = false;
@@ -257,6 +355,7 @@ void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int* p
     bool isReverse = false;
 
     haveMatchCard(player, usedDeck, &foundMatch);
+    
 
     if (!isPlus4_1) {
         std::cout << "Penalty! Drawing 4 cards..." << std::endl;
@@ -287,6 +386,11 @@ void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int* p
         std::cout << "Choose index of card you want to play: ";
         std::cin >> playerAction;
 
+        if (playerAction == -1) {
+            saveGame(deck, allPlayers, usedDeck, numberOfPlayers, *playersTurn, *turnDirection, *isDouble, *isPlus4);
+            exit(0);
+        }
+
         oneCardLeft(player, playerAction, usedDeck, &rightAction);
 
         if (playerAction == 0 && !rightAction) {
@@ -302,7 +406,6 @@ void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int* p
             rightAction = true;
         }
     }
-
     if (!(isReverse && numberOfPlayers == 2)) {
         if (!(*turnDirection)) {
             (*playersTurn)++;
@@ -311,7 +414,6 @@ void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int* p
             (*playersTurn)--;
         }
     }
-
     if (*playersTurn <= 0) {
         *playersTurn = numberOfPlayers;
     }
@@ -354,24 +456,41 @@ void Action(char deck[Rows][numberCards], char player[Rows][numberCards], int* p
     }
 }
 
-void playGame(char deck[Rows][numberCards], int numberOfPlayers) {
+void playGame(char deck[Rows][numberCards]) {
+    if (deck == nullptr) return;
+
     char players[4][Rows][numberCards];
     char usedDeck[Rows][numberCards];
-
-    for (int i = 0; i < numberOfPlayers; i++) {
-        addPlayersFirstCards(deck, players[i], i);
-    }
-
-    addUsedDeckFirstCards(deck, usedDeck);
-
+    
+    int choice = 0; 
+    int numberOfPlayers = 0;
     bool gameEnd = false;
     int playersTurn = 1;
     bool turnDirection = false;
     bool isDouble = true;
     bool isPlus4 = true;
 
+    std::cout << "1. New Game" << std::endl << "2. Load Game" << std::endl << "Choice: ";
+    std::cin >> choice;
+
+    if (choice == 2 && loadGame(deck, players, usedDeck, numberOfPlayers, playersTurn, turnDirection, isDouble, isPlus4)) {
+        std::cout << "Game Loaded!" << std::endl;
+    }
+    else {
+        SuffleCard(deck);
+
+        std::cout << "Please enter number of players: ";
+        std::cin >> numberOfPlayers;
+        isNumberRight(&numberOfPlayers);
+
+        for (int i = 0; i < numberOfPlayers; i++) {
+            addPlayersFirstCards(deck, players[i], i);
+        }
+        addUsedDeckFirstCards(deck, usedDeck);
+    }
+
     while (!gameEnd) {
-        Action(deck, players[playersTurn - 1], &playersTurn,
+        Action(deck, players, &playersTurn,
             usedDeck, &gameEnd, numberOfPlayers, &turnDirection, &isDouble, &isPlus4);
     }
 }
@@ -396,16 +515,8 @@ int main() {
         }
     };
 
-    SuffleCard(deck);
-
     std::cout << "-----Uno-----" << std::endl;
-    std::cout << "Please enter number of players: ";
-    int numberOfPlayers = 0;
-    std::cin >> numberOfPlayers;
-
-    isNumberRight(&numberOfPlayers);
-
-    playGame(deck, numberOfPlayers);
+    playGame(deck);
 
     return 0;
 }
