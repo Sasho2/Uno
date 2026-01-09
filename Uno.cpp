@@ -24,6 +24,23 @@ void isNumberRight(int* numberOfPlayers) {
     }
 }
 
+void isChoiceRight(int* choice) {
+    if (choice == nullptr) return;
+
+    bool isNumberRight = false;
+
+    while (!isNumberRight) {
+        if (*choice > 2 || *choice < 1) {
+            std::cout << "Invalid number" << std::endl
+                << "Please enter 1 or 2" << std::endl;
+            std::cin >> *choice;
+        }
+        else {
+            isNumberRight = true;
+        }
+    }
+}
+
 int my_len(char cards[Rows][numberCards]) {
     if (cards == nullptr) return 0;
 
@@ -467,11 +484,12 @@ void playGame(char deck[Rows][numberCards]) {
 
     std::cout << "1. New Game" << std::endl << "2. Load Game" << std::endl << "Choice: ";
     std::cin >> choice;
+    isChoiceRight(&choice);
 
     if (choice == 2 && loadGame(deck, players, usedDeck, numberOfPlayers, playersTurn, turnDirection, isDouble, isPlus4)) {
         std::cout << "Game Loaded!" << std::endl;
     }
-    else {
+    else if (choice == 1){
         SuffleCard(deck);
 
         std::cout << "Please enter number of players: ";
