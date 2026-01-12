@@ -295,10 +295,9 @@ void CheckForSpecialCard(char usedDeck[Rows][numberCards], bool* turnDirection,
         char newColor;
         std::cout << "Wild card played! Choose new color (R, G, B, Y): ";
         std::cin >> newColor;
-
         usedDeck[0][lastId] = newColor;
 
-        if (usedDeck[1][lastId] == '4') {
+        if (usedDeck[1][lastId] == 'F') {
             *isPlus4 = false;
         }
     }
@@ -314,7 +313,12 @@ void isTheDeckEmpty(char deck[Rows][numberCards], char usedDeck[Rows][numberCard
         if (len <= 1) return;
 
         for (size_t i = 0; i < len - 1; i++) {
-            deck[0][i] = usedDeck[0][i];
+            if (usedDeck[1][i] == 'W' || usedDeck[1][i] == 'F') {
+                deck[0][i] = 'W';
+            }
+            else {
+                deck[0][i] = usedDeck[0][i];
+            }
             deck[1][i] = usedDeck[1][i];
 
             usedDeck[0][i] = 'e';
@@ -534,7 +538,7 @@ int main() {
             '0','1','2','3','4','5','6','7','8','9','1','2','3','4','5','6','7','8','9','S','S','R','R','D','D',
             '0','1','2','3','4','5','6','7','8','9','1','2','3','4','5','6','7','8','9','S','S','R','R','D','D',
             '0','1','2','3','4','5','6','7','8','9','1','2','3','4','5','6','7','8','9','S','S','R','R','D','D',
-            'W','W','W','W', '4','4','4','4'
+            'W','W','W','W', 'F','F','F','F'
         }
     };
 
