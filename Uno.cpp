@@ -6,7 +6,7 @@
 const int maxPlayers = 4;
 const int numberCards = 108;
 const int Rows = 2;
-const int maxNumbersForChoice = 20;
+const int maxNumbersForChoices = 20;
 
 int my_len(char cards[Rows][numberCards]) {
     if (cards == nullptr) return 0;
@@ -35,7 +35,7 @@ int myLenForChoices(char* str) {
 }
 
 int NumberOfPlayers() {
-    char number[maxNumbersForChoice];
+    char number[maxNumbersForChoices];
     bool isNumberRight = false;
 
     std::cin >> number;
@@ -54,7 +54,7 @@ int NumberOfPlayers() {
 }
 
 int Choice() {
-    char choice[maxNumbersForChoice];
+    char choice[maxNumbersForChoices];
     bool isNumberRight = false;
 
     std::cin >> choice;
@@ -73,7 +73,7 @@ int Choice() {
 }
 
 char Color() {
-    char color[maxNumbersForChoice];
+    char color[maxNumbersForChoices];
     bool isColorRight = false;
 
     std::cin >> color;
@@ -417,10 +417,12 @@ void Action(char deck[Rows][numberCards], char allPlayers[maxPlayers][Rows][numb
 
     printCards(allPlayers[*playersTurn - 1], usedDeck, *playersTurn, choice);
     haveMatchCard(allPlayers[*playersTurn - 1], usedDeck, &foundMatch);
+    isTheDeckEmpty(deck, usedDeck);
 
     if (!isPlus4_1) {
         std::cout << "Penalty! Drawing 4 cards..." << std::endl;
         for (int i = 0; i < 4; i++) {
+            if (my_len(deck) == 0) continue;
             drawCard(deck, allPlayers[*playersTurn - 1]);
             isTheDeckEmpty(deck, usedDeck);
         }
@@ -430,13 +432,14 @@ void Action(char deck[Rows][numberCards], char allPlayers[maxPlayers][Rows][numb
     else if (!isDouble1) {
         std::cout << "Penalty! Drawing 2 cards..." << std::endl;
         for (int i = 0; i < 2; i++) {
+            if (my_len(deck) == 0) continue;
             drawCard(deck, allPlayers[*playersTurn - 1]);
             isTheDeckEmpty(deck, usedDeck);
         }
         *isDouble = true;
         rightAction = true;
     }
-    else if (foundMatch == false && usedDeck[0][my_len(usedDeck) - 1] != 'W') {
+    else if (foundMatch == false && usedDeck[0][my_len(usedDeck) - 1] != 'W' && my_len(deck) != 0) {
         std::cout << "No suitable cards. Automatically drawing..." << std::endl;
         drawCard(deck, allPlayers[*playersTurn - 1]);
         isTheDeckEmpty(deck, usedDeck);
@@ -471,9 +474,8 @@ void Action(char deck[Rows][numberCards], char allPlayers[maxPlayers][Rows][numb
 
         oneCardLeft(allPlayers[*playersTurn - 1], playerAction, usedDeck, &rightAction);
 
-        if (playerAction == 0 && !rightAction && choice != 1) {
+        if (playerAction == 0 && !rightAction && choice != 1 && my_len(deck) != 0) {
             drawCard(deck, allPlayers[*playersTurn - 1]);
-            isTheDeckEmpty(deck, usedDeck);
             rightAction = true;
         }
         else if ((playerAction >= 1 && playerAction <= my_len(allPlayers[*playersTurn - 1])) 
