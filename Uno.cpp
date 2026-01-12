@@ -7,14 +7,15 @@ const int maxPlayers = 4;
 const int numberCards = 108;
 const int Rows = 2;
 const int maxNumbersForChoices = 20;
+const int initialCardsCount = 7;
+const int penaltyDrawTwo = 2;
+const int penaltyDrawFour = 4;
 
 int my_len(char cards[Rows][numberCards]) {
     if (cards == nullptr) return 0;
-
     int size = 0;
 
-    for (int i = 0; i < numberCards; i++)
-    {
+    for (int i = 0; i < numberCards; i++) {
         if (cards[0][i] == '\0') {
             break;
         }
@@ -122,6 +123,15 @@ void deleteTheLastCards(char deck[Rows][numberCards]) {
     }
 }
 
+void writeArrayToFile(std::ofstream& file, char target[Rows][numberCards]) {
+    int len = my_len(target);
+    file << len << std::endl;
+    for (int i = 0; i < len; i++) file << target[0][i];
+    file << std::endl;
+    for (int i = 0; i < len; i++) file << target[1][i];
+    file << std::endl;
+}
+
 void saveGame(char deck[Rows][numberCards], char players[maxPlayers][Rows][numberCards],
     char usedDeck[Rows][numberCards], int numberOfPlayers,
     int playersTurn, bool turnDirection, bool isDouble, bool isPlus4) {
@@ -136,23 +146,23 @@ void saveGame(char deck[Rows][numberCards], char players[maxPlayers][Rows][numbe
     file << numberOfPlayers << " " << playersTurn << " " 
         << turnDirection << " " << isDouble << " " << isPlus4 << std::endl;
 
-    auto writeRow = [&](char target[Rows][numberCards]) {
-        int len = my_len(target);
-        file << len << std::endl;
-        for (int i = 0; i < len; i++) file << target[0][i];
-        file << std::endl;
-        for (int i = 0; i < len; i++) file << target[1][i];
-        file << std::endl;
-        };
-
-    writeRow(deck);
-    writeRow(usedDeck);
+    writeArrayToFile(file, deck);
+    writeArrayToFile(file, usedDeck);
     for (int i = 0; i < numberOfPlayers; i++) {
-        writeRow(players[i]);
+        writeArrayToFile(file, players[i]);
     }
 
     file.close();
     std::cout << "The game is saved. You can close the game." << std::endl;
+}
+
+void readArrayFromFile(std::ifstream& file, char target[Rows][numberCards]) {
+    int len = 0;
+    file >> len;
+    for (int i = 0; i < len; i++) file >> target[0][i];
+    target[0][len] = '\0';
+    for (int i = 0; i < len; i++) file >> target[1][i];
+    target[1][len] = '\0';
 }
 
 bool loadGame(char deck[Rows][numberCards], char players[maxPlayers][Rows][numberCards],
@@ -164,18 +174,9 @@ bool loadGame(char deck[Rows][numberCards], char players[maxPlayers][Rows][numbe
 
     file >> numberOfPlayers >> playersTurn >> turnDirection >> isDouble >> isPlus4;
 
-    auto readRow = [&](char target[Rows][numberCards]) {
-        int len;
-        file >> len;
-        for (int i = 0; i < len; i++) file >> target[0][i];
-        target[0][len] = '\0';
-        for (int i = 0; i < len; i++) file >> target[1][i];
-        target[1][len] = '\0';
-        };
-
-    readRow(deck);
-    readRow(usedDeck);
-    for (int i = 0; i < numberOfPlayers; i++) readRow(players[i]);
+    readArrayFromFile(file, deck);
+    readArrayFromFile(file, usedDeck);
+    for (int i = 0; i < numberOfPlayers; i++) readArrayFromFile(file, players[i]);
 
     file.close();
     return true;
@@ -184,8 +185,7 @@ bool loadGame(char deck[Rows][numberCards], char players[maxPlayers][Rows][numbe
 void addPlayersFirstCards(char deck[Rows][numberCards], char player[Rows][numberCards], int playerNumber) {
     if (deck == nullptr || player == nullptr) return;
 
-
-    int playerNumberMinus7 = 7 + (playerNumber * 7);
+    int playerNumberMinus7 = initialCardsCount + (playerNumber * initialCardsCount);
 
     for (int i = 0; i < 7; i++) {
         int len = i + my_len(deck) - playerNumberMinus7;
@@ -421,7 +421,7 @@ void Action(char deck[Rows][numberCards], char allPlayers[maxPlayers][Rows][numb
 
     if (!isPlus4_1) {
         std::cout << "Penalty! Drawing 4 cards..." << std::endl;
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < penaltyDrawFour; i++) {
             if (my_len(deck) == 0) continue;
             drawCard(deck, allPlayers[*playersTurn - 1]);
             isTheDeckEmpty(deck, usedDeck);
@@ -431,7 +431,7 @@ void Action(char deck[Rows][numberCards], char allPlayers[maxPlayers][Rows][numb
     } 
     else if (!isDouble1) {
         std::cout << "Penalty! Drawing 2 cards..." << std::endl;
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < penaltyDrawTwo; i++) {
             if (my_len(deck) == 0) continue;
             drawCard(deck, allPlayers[*playersTurn - 1]);
             isTheDeckEmpty(deck, usedDeck);
@@ -546,7 +546,7 @@ void playGame(char deck[Rows][numberCards]) {
     if (choice == 2 && loadGame(deck, players, usedDeck, numberOfPlayers, playersTurn, turnDirection, isDouble, isPlus4)) {
         std::cout << "Game Loaded!" << std::endl;
     }
-    else if (choice == 1){
+    else if (choice == 1) {
         ShuffleCard(deck);
 
         std::cout << "Please enter number of players: ";
