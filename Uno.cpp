@@ -17,6 +17,7 @@ const char yellowColor = 'Y';
 
 int myLenForCards(char cards[rows][numberCards]) {
     if (cards == nullptr) return 0;
+
     int size = 0;
 
     for (int i = 0; i < numberCards; i++) {
@@ -30,6 +31,7 @@ int myLenForCards(char cards[rows][numberCards]) {
 
 int myLenForChoices(char* str) {
     if (str == nullptr) return 0;
+
     int size = 0;
 
     while (*str != '\0') {
@@ -42,7 +44,6 @@ int myLenForChoices(char* str) {
 int NumberOfPlayers() {
     char number[maxNumbersForChoices];
     bool isNumberRight = false;
-
     std::cout << "Please enter number of players: ";
     std::cin >> number;
 
@@ -62,7 +63,6 @@ int NumberOfPlayers() {
 int choice() {
     char choice[maxNumbersForChoices];
     bool isNumberRight = false;
-
     std::cin >> choice;
 
     while (!isNumberRight) {
@@ -81,7 +81,6 @@ int choice() {
 char color() {
     char color[maxNumbersForChoices];
     bool isColorRight = false;
-
     std::cin >> color;
 
     while (!isColorRight) {
@@ -274,7 +273,6 @@ void addUsedDeckFirstCards(char deck[rows][numberCards], char usedDeck[rows][num
 void drawCard(char deck[rows][numberCards], char playerCards[rows][numberCards]) {
     if (deck == nullptr || playerCards == nullptr) return;
 
-
     int deckLen = myLenForCards(deck) - 1;
     int playerLen = myLenForCards(playerCards);
 
@@ -353,7 +351,6 @@ void checkForSpecialCard(char usedDeck[rows][numberCards], bool* turnDirection,
     bool* isSkip, bool* isDouble1, bool* isReverse, bool* isPlus4) {
     if (turnDirection == nullptr || usedDeck == nullptr || isSkip == nullptr
         || isDouble1 == nullptr || isReverse == nullptr || isPlus4 == nullptr) return;
-
 
     int lastId = myLenForCards(usedDeck) - 1;
 
@@ -492,10 +489,11 @@ bool executePlayerTurn(char deck[rows][numberCards], char allPlayers[maxPlayers]
 
         printCards(allPlayers[*playersTurn - 1], usedDeck, *playersTurn, continuePlaying);
     }
+    bool saidUno = false;
+    int playerAction = -2;
 
     while (!rightAction) {
-        bool saidUno = false;
-        int playerAction = rightIndexAction(&saidUno);
+        playerAction = rightIndexAction(&saidUno);
 
         if (playerAction == -1) {
             saveGame(deck, allPlayers, usedDeck, numberOfPlayers, *playersTurn, *turnDirection, *isDouble, *isPlus4);
